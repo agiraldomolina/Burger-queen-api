@@ -4,6 +4,8 @@ const productController = require('./../controllers/productController');
 
 const router = express.Router();
 
+router.route('/avg-price').get(productController.getAvgPrice);
+
 router
   .route('/')
   .get(productController.getAllProducts)

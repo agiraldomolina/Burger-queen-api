@@ -1,10 +1,18 @@
 /* eslint-disable*/
 const Product = require('./../schemes/productScheme');
+const APIFeatures = require('./../utils/apiFeatures');
+
 
 exports.getAllProducts = async(req, res) =>{
     try {
-        const products = await Product.find();
+        const faetures = new APIFeatures(Product.find(), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+        const products = await faetures.query;
 
+        // SEND TO THE CLIENT
         res.status(200).json({
             status:'success',
             results: products.length,
@@ -80,6 +88,32 @@ exports.deleteProduct = async (req, res) =>{
         res.status(204).json({
             status:'success',
             data: null
+        });
+    } catch (err) {
+        res.status(404).json({
+            status: 'fail',
+            message: err
+        });
+    }
+};
+
+exports.getAvgPrice = async (req, res) =>{
+    try {
+        const avgPrice = await Product.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    avgPrice: {
+                        $avg: '$price'
+                    }
+                }
+            }
+        ]);
+        res.status(200).json({
+            status:'success',
+            data: {
+                avgPrice
+            }
         });
     } catch (err) {
         res.status(404).json({
