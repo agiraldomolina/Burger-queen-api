@@ -102,7 +102,7 @@ exports.getAvgPrice = async (req, res) =>{
         const avgPrice = await Product.aggregate([
             {
                 $group: {
-                    _id: null,
+                    _id: { $toUpper: '$type'},
                     avgPrice: {
                         $avg: '$price'
                     }

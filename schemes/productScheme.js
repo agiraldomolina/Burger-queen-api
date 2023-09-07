@@ -5,11 +5,14 @@ const producSchema = new mongoose.Schema({
     name: {
       type: String,
       required: [true, 'A product must have a name'],
-      unique: true
+      unique: true,
+      maxLength: [50, 'A product name cannot be more than 50 characters'],
+      minLength: [3, 'A product name must be at least 3 characters']
     },
     price:{
       type: Number,
       required: [true, 'A product must have a name'],
+      min: [1, 'A product price must be at least 1'],
     },
     image:{
       type: String,
@@ -18,6 +21,10 @@ const producSchema = new mongoose.Schema({
     type:{
       type: String,
       required: [true, 'A product must have a type'],
+      enum:{
+        values :['dasayuno', 'almuerzo', 'cena'],
+        message:'Type must be either dasayuno, almuerzo or cena'
+      }
     },
     dateEntry:{
       type: Date,
