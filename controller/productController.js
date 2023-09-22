@@ -1,120 +1,70 @@
 /* eslint-disable*/
 const Product = require('../models/productModel')
 const APIFeatures = require('../utils/apiFeatures');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
+exports.getAllProducts = catchAsync(async (req, res,next) =>{
+    //const products = await Product.find();
+    const features = new APIFeatures(Product.find(), req.query)
+    .paginate()
+    const products = await features.query;
+    //Send TO THE CLIENT
+    res.status(200).json({
+        status:'success',
+        results: products.length,
+        data: {
+            products
+        }
+    });
+});
 
-exports.getAllProducts = async(req, res) =>{
-    try {
-        const faetures = new APIFeatures(Product.find(), req.query)
-        .filter()
-        .sort()
-        .limitFields()
-        .paginate();
-        const products = await faetures.query;
-
-        // SEND TO THE CLIENT
-        res.status(200).json({
-            status:'success',
-            results: products.length,
-            data: {
-                products
-            }
-        });
-    } catch (err) {
-        res.status(404).json({
-            status: 'fail',
-            message: err
-        });
-    }  
-};
-
-exports.updateProduct = async (req, res) =>{
-    try {
-        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body,)
-        if(!updatedProduct) console.log('Product not found');
-        console.log(updatedProduct);
-        res.status(200).json({
-            status:'success',
-            data: {
-                updatedProduct
-            }
-        })       
-    } catch (err) {
-        res.status(404).json({
-            status: 'fail',
-            messupdatedProduct
-        });
+exports.updateProduct = catchAsync(async (req, res) =>{
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body,
+        {
+            new: true,
+            runValidators: true,
+          });
+    if (!updatedProduct) {
+    return next(new AppError('No product found with that ID', 404));
     }
-}
+   
+    res.status(200).json({
+        status:'success',
+        data: {
+            updatedProduct
+        }
+    })       
+})
 
 
-// exports.updateProduct = async(req, res) =>{
-//     try {
-//         const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body,)
-//         if(!updatedProduct) console.log('Product not found');
-//         console.log(updatedProduct);
-//         res.status(200).json({
-//             status:'success',
-//             data: {
-//                 updatedProduct
-//             }
-//         })       
-//     } catch (err) {
-//         res.status(404).json({
-//             status: 'fail',
-//             messupdatedProduct
-//         });
-//     }
-// }
+exports.getProduct = catchAsync( async(req, res) =>{
+    const tour = await Product.findById(req.params.id);
+    res.status(200).json({
+        status:'success',
+        data: {
+            tour
+        }
+    });    
+})
 
-exports.getProduct =  async(req, res) =>{
-    try {
-        const tour = await Product.findById(req.params.id);
-        res.status(200).json({
-            status:'success',
-            data: {
-                tour
-            }
-        });
-    } catch (err) {
-        res.status(404).json({
-            status: 'fail',
-            message: err
-        });
-    }        
-}
+exports.createProduct =catchAsync( async (req, res) =>{
+    const newProduct = await Product.create(req.body);
+    res.status(201).json({
+        status:'success',
+        data: {
+            product: newProduct
+        }
+    });
+});
 
-exports.createProduct = async (req, res) =>{
-    try {
-        const newProduct = await Product.create(req.body);
-        res.status(201).json({
-            status:'success',
-            data: {
-                product: newProduct
-            }
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err.message
-        })
-    }   
-};
-
-exports.deleteProduct = async (req, res) =>{
-    try {
-        await Product.findByIdAndDelete(req.params.id);
-        res.status(204).json({
-            status:'success',
-            data: null
-        });
-    } catch (err) {
-        res.status(404).json({
-            status: 'fail',
-            message: err
-        });
-    }
-};
+exports.deleteProduct = catchAsync(async (req, res) =>{
+    await Product.findByIdAndDelete(req.params.id);
+    res.status(204).json({
+        status:'success',
+        data: null
+    });
+});
 
 exports.getAvgPrice = async (req, res) =>{
     try {
