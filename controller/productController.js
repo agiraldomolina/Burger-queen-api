@@ -1,6 +1,6 @@
 /* eslint-disable*/
-const Product = require('./../schemes/productScheme');
-const APIFeatures = require('./../utils/apiFeatures');
+const Product = require('../models/productModel')
+const APIFeatures = require('../utils/apiFeatures');
 
 
 exports.getAllProducts = async(req, res) =>{
@@ -28,25 +28,44 @@ exports.getAllProducts = async(req, res) =>{
     }  
 };
 
-exports.updateProduct = async(req, res) =>{
+exports.updateProduct = async (req, res) =>{
     try {
-        const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        })
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body,)
+        if(!updatedProduct) console.log('Product not found');
+        console.log(updatedProduct);
         res.status(200).json({
             status:'success',
             data: {
-                product
+                updatedProduct
             }
         })       
     } catch (err) {
         res.status(404).json({
             status: 'fail',
-            message: err
+            messupdatedProduct
         });
     }
 }
+
+
+// exports.updateProduct = async(req, res) =>{
+//     try {
+//         const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body,)
+//         if(!updatedProduct) console.log('Product not found');
+//         console.log(updatedProduct);
+//         res.status(200).json({
+//             status:'success',
+//             data: {
+//                 updatedProduct
+//             }
+//         })       
+//     } catch (err) {
+//         res.status(404).json({
+//             status: 'fail',
+//             messupdatedProduct
+//         });
+//     }
+// }
 
 exports.getProduct =  async(req, res) =>{
     try {
@@ -77,7 +96,7 @@ exports.createProduct = async (req, res) =>{
     } catch (err) {
         res.status(400).json({
             status: 'fail',
-            message: 'Invalid data sent'
+            message: err.message
         })
     }   
 };

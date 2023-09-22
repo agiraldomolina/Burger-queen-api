@@ -18,8 +18,8 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(express.json());
 
-app.use("/api/v1/orders", orderRouter);
-app.use("/api/v1/products", productRouter);
+app.use("/orders", orderRouter);
+app.use("/products", productRouter);
 
 app.all('*', (req, res, next) => {
   next(new appError(`Can't find ${req.originalUrl} on this server`, 400));
