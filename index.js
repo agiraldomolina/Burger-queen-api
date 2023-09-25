@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const appError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
 
+const authRouter = require("./routes/authRoutes");
 const orderRouter = require("./routes/orderRoutes");
 const productRouter = require("./routes/productRoutes");
 const userRouter = require('./routes/userRoutes');
@@ -21,6 +22,14 @@ if (process.env.NODE_ENV === "development") {
 /* Next middleware is used to ensure that your Express application can understand and work with JSON data sent in incoming requests. This is crucial for many modern web applications, as JSON is a common format for exchanging data between the client and server in API (Application Programming Interface)-based web applications*/
 app.use(express.json());
 
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  //console.log(req.headers);
+
+  next();
+})
+
+app.use('/login', authRouter);
 app.use("/orders", orderRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
@@ -29,7 +38,7 @@ app.all('*', (req, res, next) => {
   next(new appError(`Can't find ${req.originalUrl} on this server`, 400));
 });
 
-app.use(globalErrorHandler);
+app.use(globalErrorHandler.cathMyErrors);
 
 
 module.exports = app;

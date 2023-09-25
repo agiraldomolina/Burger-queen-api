@@ -1,5 +1,14 @@
 /*eslint-disable */
-const express = require("express");
+const express = require('express');
+const authController = require('../controllers/authController');
+
+const router = express.Router();
+
+router
+  .route("/")
+  .post(authController.login);
+
+module.exports = router;
 
 // const jwt = require("jsonwebtoken");
 // const config = require("../config");

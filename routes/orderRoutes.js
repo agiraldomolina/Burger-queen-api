@@ -1,6 +1,6 @@
 /*eslint-disable */
 const express = require("express");
-const orderController = require('../controller/orders');
+const orderController = require('../controllers/orderController');
 
 const router = express.Router();
 
