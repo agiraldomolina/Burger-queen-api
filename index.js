@@ -5,20 +5,24 @@ const morgan = require("morgan");
 const appError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
 
-const orderRouter = require("./routes/order");
-const productRouter = require("./routes/products");
+const orderRouter = require("./routes/orderRoutes");
+const productRouter = require("./routes/productRoutes");
+const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
 //MIDDLEWARES:
+/* 'Dev' is one of the predefined logging formats provided by Morgan. This logging format displays basic information about each incoming request, such as the HTTP method, the route, the status code, and the response time.*/
 console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
+/* Next middleware is used to ensure that your Express application can understand and work with JSON data sent in incoming requests. This is crucial for many modern web applications, as JSON is a common format for exchanging data between the client and server in API (Application Programming Interface)-based web applications*/
 app.use(express.json());
 
 app.use("/orders", orderRouter);
+app.use("/users", userRouter);
 app.use("/products", productRouter);
 
 app.all('*', (req, res, next) => {
@@ -26,6 +30,7 @@ app.all('*', (req, res, next) => {
 });
 
 app.use(globalErrorHandler);
+
 
 module.exports = app;
 
