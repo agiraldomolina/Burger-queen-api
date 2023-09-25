@@ -10,13 +10,13 @@ const router = express.Router();
 router
   .route('/')
   .get(authController.protect, productController.getAllProducts)
-  .post(productController.createProduct);
+  .post(authController.protect, authController.restrictTo('admin'), productController.createProduct);
 
 router
     .route('/:id')
-    .get(productController.getProduct)
-    .patch(productController.updateProduct)
-   .delete(productController.deleteProduct);
+    .get(authController.protect, productController.getProduct)
+    .patch(authController.protect, authController.restrictTo('admin'), productController.updateProduct)
+   .delete(authController.protect, authController.restrictTo('admin'), productController.deleteProduct);
 
 module.exports = router;
 

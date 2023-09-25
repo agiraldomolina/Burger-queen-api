@@ -45,6 +45,7 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 });
 
+// Protect route to only authenticated users
 exports.protect = catchAsync(async (req, res, next) => {
   // Getting the token and check if it exists
   let token;
@@ -59,21 +60,26 @@ exports.protect = catchAsync(async (req, res, next) => {
   // Verification token
   const verifyToken = promisify(jwt.verify);
   const decoded = await verifyToken(token, process.env.JWT_SECRET);
-  console.log(decoded);
 
   // Check if user still exists
-  const freshUser = await User.findById(decoded.id);
-  if (!freshUser) {
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
     return next(new AppError('The user belonging to this token does no longer exists', 404));
   }
 
   // Check if user changed password after the token was issued
-  if (await freshUser.changedPasswordAfter(decoded.iat)) {
+  if (await currentUser.changedPasswordAfter(decoded.iat)) {
     return next(new AppError('Your password has changed since you last logged in. Please log in again.', 401));
   }
 
   // Grant acces to protected routes
-  req.user = freshUser;
-
+  req.user = currentUser;
   next();
 });
+
+exports.restrictTo = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    return next(new AppError('You are not authorized to perform this action', 403));
+  }
+  next();
+};

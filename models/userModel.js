@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema({
   role: {
     type: String,
-    required: [true, 'Please provide a role'],
+    // required: [true, 'Please provide a role'],
     enum: ['admin', 'waiter','chef'],
     default: 'waiter',
   },
@@ -69,7 +69,6 @@ userSchema.methods.changedPasswordAfter = async function (JWTTimestamp) {
       this.passwordChangedAt.getTime() / 1000,
       10,
     );
-    console.log(changedTimestamp, JWTTimestamp);
 
      return JWTTimestamp < changedTimestamp; // true if password changed after token
   }
