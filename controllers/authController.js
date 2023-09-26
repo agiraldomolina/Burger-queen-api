@@ -1,9 +1,10 @@
-/// *eslint-disable*/
+/*eslint-disable*/
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const sendEmail = require('../utils/email');
 
 const signToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
   expiresIn: process.env.JWT_EXPIRES_IN,
@@ -83,3 +84,24 @@ exports.restrictTo = (...roles) => (req, res, next) => {
   }
   next();
 };
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  // 1) Get user based on email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError('No user with that email address', 404));
+  }
+
+  // 2) Generate reset token
+  console.log("hi there");
+  const resetToken = user.createPasswordResetToken();
+  console.log('hi there after reset token');
+  console.log(resetToken);
+  await user.save({ validateBeforeSave: false });
+  
+  res.status(200).json({
+    status: 'success',
+    resetToken // resetToken = await user.createResetPasswordToken();
+  });
+  
+});
