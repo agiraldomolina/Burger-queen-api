@@ -36,7 +36,8 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
     }
 
     /* Filtered out unwanted fields names that are not allowed to be updated 
-    by now it's just the name but in later versions could be more fields*/
+    by now it's just the name but in later versions could be more fields
+    In this way a regular user cannot change its role to admin*/
     const filteredBody = filterObject(req.body,'email');
 
     // Update user document
@@ -50,7 +51,20 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
       }
     })
 
-  })
+  });
+
+  exports.deleteMe = catchAsync(async (req, res,next) =>{
+    await User.findByIdAndUpdate(req.user.id, {active: false}, {new: true});
+
+    res.status(204).json({
+      status:'success',
+      message: 'User deleted successfully',
+      data: {
+       data: null,
+      },
+    })
+
+  });
   
   exports.updateUser = catchAsync(async (req, res) =>{
     res.status(500).json({
