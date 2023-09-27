@@ -2,6 +2,7 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('../utils/apiFeatures');
+const AppError = require('../utils/appError');
 
 exports.getAllUser = catchAsync(async (req, res,next) =>{
     const features = new APIFeatures(User.find(), req.query)
@@ -16,6 +17,20 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
         }
     });
   });
+
+  exports.updateMe = catchAsync(async (req, res,next) =>{
+    // Create error if user POSTs password data
+    if(req.body.password || req.body.passwordConfirm) {
+      return next(new AppError('This route is not for password update, please use /updateMyPasssword', 500));
+    }
+
+    // Update user document
+
+    res.status(200).json({
+      status:'success',
+    })
+
+  })
   
   exports.updateUser = catchAsync(async (req, res) =>{
     res.status(500).json({
