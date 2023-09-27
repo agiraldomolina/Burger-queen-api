@@ -4,6 +4,17 @@ const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 
+const filterObject = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((key) => {
+    if (allowedFields.includes(key)) {
+      newObj[key] = obj[key];
+    }
+  });
+  console.log(newObj);
+  return newObj;
+};
+
 exports.getAllUser = catchAsync(async (req, res,next) =>{
     const features = new APIFeatures(User.find(), req.query)
     .paginate()
@@ -24,10 +35,19 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
       return next(new AppError('This route is not for password update, please use /updateMyPasssword', 500));
     }
 
+    /* Filtered out unwanted fields names that are not allowed to be updated 
+    by now it's just the name but in later versions could be more fields*/
+    const filteredBody = filterObject(req.body,'email');
+
     // Update user document
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {new: true, runValidators: true});
+    console.log(updatedUser);
 
     res.status(200).json({
       status:'success',
+      data: {
+        user:  updatedUser
+      }
     })
 
   })
