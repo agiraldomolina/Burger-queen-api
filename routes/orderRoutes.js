@@ -1,13 +1,14 @@
 /*eslint-disable */
 const express = require("express");
 const orderController = require('../controllers/orderController');
+const authController = require('../controllers/authController');
 
 const router = express.Router();
 
 router
   .route("/")
   .get(orderController.getAllOrders)
-  .post(orderController.createOrder);
+  .post(authController.protect,  orderController.createOrder);
 
 router
   .route("/:id")
