@@ -69,7 +69,7 @@ userSchema.pre('save', async function (next) {
 });
 
 // next Middleware is used to display only active users
-userSchema.pre(/^find/, async function (next) {
+userSchema.pre('find', async function (next) {
   // this points to the currrent query
   this.find({active: {$ne : false}});
   next();

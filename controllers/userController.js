@@ -65,6 +65,23 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
     })
 
   });
+
+  exports.unDeleteMe = catchAsync(async (req, res, next) =>{
+    // Get and update user based on email    
+    const unDeletedUser = await User.findOneAndUpdate({email: req.body.email}, {active: true}, { returnOriginal: false
+    });
+    if (!unDeletedUser) {
+      return next(new AppError('No user found with that email address', 404))
+    };
+
+    res.status(200).json({
+      status:'success',
+      message: 'User undeleted successfully',
+      data: {
+        data: unDeletedUser,
+      },
+    })
+  })
   
   exports.updateUser = catchAsync(async (req, res) =>{
     res.status(500).json({
@@ -118,6 +135,11 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
   });
   
   exports.deleteUser = catchAsync(async (req, res) =>{
+    // Get and delete user based on email    
+    const deletedUser = await User.findOneAndDelete({email: req.body.email});
+    if (!deletedUser) {
+      return next(new AppError('No user found with that email address', 404))
+    };
     res.status(500).json({
         status: 'error',
         message: 'This route is not yet implemented',

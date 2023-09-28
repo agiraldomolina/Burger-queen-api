@@ -2,6 +2,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
 
 const appError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
@@ -16,12 +18,16 @@ const app = express();
 console.log(process.env.NODE_ENV);
 
 // Global MIDDLEWARES
-/* 'Dev' is one of the predefined logging formats provided by Morgan. This logging format displays basic information about each incoming request, such as the HTTP method, the route, the status code, and the response time.*/
+// Set security HTTP headers
+app.use(helmet());
+
+// Development logging
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 };
+/* 'Dev' is one of the predefined logging formats provided by Morgan. This logging format displays basic information about each incoming request, such as the HTTP method, the route, the status code, and the response time.*/
 
-// Rate limiting middleware for allowing max 100 requests from the client to the server durin 1  hour
+// Limit requests from an IP to 100 requests per hour
 const limiter = rateLimit({
   max : 100,
   windowMs : 60 * 60 * 1000,
@@ -30,13 +36,19 @@ const limiter = rateLimit({
 
 app.use('/', limiter);
 
-/* Next middleware is used to ensure that your Express application can understand and work with JSON data sent in incoming requests. This is crucial for many modern web applications, as JSON is a common format for exchanging data between the client and server in API (Application Programming Interface)-based web applications*/
-app.use(express.json());
 
+/* Next middleware is used to ensure that your Express application can understand and work with JSON data sent in incoming requests. This is crucial for many modern web applications, as JSON is a common format for exchanging data between the client and server in API (Application Programming Interface)-based web applications*/
+
+// Body parser, reading data from the body into req.body
+app.use(express.json({limit: '10kb'}));
+
+//Data sanitation against NoSQL injection
+app.use(mongoSanitize());
+
+// Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   //console.log(req.headers);
-
   next();
 })
 
