@@ -1,3 +1,4 @@
+/*eslint-disable*/
 const mongoose = require('mongoose');
 
 const productOrderSchema = new mongoose.Schema({
@@ -24,13 +25,21 @@ const orderSchema = new mongoose.Schema({
   dateProcessed: Date,
 });
 
-orderSchema.pre('save', async function (next) {
+orderSchema.pre('findOneAndUpdate', async function (next) {
 // Only run when status is modified
-  if (!this.isModified('status') || this.isNew) return next();
+// console.log("hello from orderSchema pre save");
+// console.log(this.isModified('client'));
+// console.log(this.isNew);
+//   if (!this.isModified('status') || this.isNew) {
+//     console.log("hi there");
+//     return next()};
 
-  if (this.isModified('status') && (this.status === 'delivered')) {
+  if (this.status === 'delivered') {
+    console.log("hi there delivered");
     this.dateProcessed = Date.now();
+    console.log(this);
   }
+  next();
 });
 
 const Order = mongoose.model('Order', orderSchema);

@@ -13,7 +13,7 @@ router
 router
   .route("/:id")
   .get(orderController.getOrder)
-  .patch(orderController.createOrder)
+  .patch(orderController.updateOrder)
   .delete(orderController.deleteOrder);
 
 module.exports = router;
