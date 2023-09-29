@@ -58,12 +58,16 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 
 exports.getOrder = catchAsync(async (req, res) => {
   const order = await Order.findById(req.params.id)
-  .populate('user').
+  .populate({
+    path: 'user',
+    select: '-__v -_id '
+  }).
   populate({
     path: 'products',
     populate: {
       path: 'product',
-      model: Product
+      model: Product,
+      select: '-__v -_id -image'
     }
   });
   res.status(200).json({

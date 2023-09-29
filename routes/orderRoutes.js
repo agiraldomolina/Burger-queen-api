@@ -8,13 +8,13 @@ const router = express.Router();
 router
   .route("/")
   .get(authController.protect, orderController.getAllOrders)
-  .post(authController.protect,  orderController.createOrder);
+  .post(authController.protect,authController.restrictTo('waiter'), orderController.createOrder);
 
 router
   .route("/:id")
   .get(authController.protect, orderController.getOrder)
-  .patch(authController.protect, orderController.updateOrder)
-  .delete(authController.protect, orderController.deleteOrder);
+  .patch(authController.protect, authController.restrictTo('waiter'), orderController.updateOrder)
+  .delete(authController.protect, authController.restrictTo('waiter'), orderController.deleteOrder);
 
 module.exports = router;
 
