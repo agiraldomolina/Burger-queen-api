@@ -1,19 +1,28 @@
 /*eslint-disable*/
 const mongoose = require('mongoose');
+const Product = require('../models/productModel');
 
-const productOrderSchema = new mongoose.Schema({
-  qty: Number,
-  product: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Product',
-    },
-  ],
-});
+const productOrderSchema = new mongoose.Schema(
+  {
+    qty: { type: Number, required: true },
+    product: { type: mongoose.Schema.ObjectId, ref: 'Product', required: true },
+  },
+  { _id: false },
+);
 
 const orderSchema = new mongoose.Schema({
-  client: String,
-  products: [productOrderSchema],
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+  },
+  client: {
+    type: String,
+    required: [true, 'Please write a name!'],
+  },
+
+  products: 
+    [productOrderSchema]
+  ,
   status: {
     type: String,
     enum: ['pending', 'canceled', 'delivering', 'delivered'],

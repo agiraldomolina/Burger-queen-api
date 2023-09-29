@@ -1,6 +1,7 @@
-/// *eslint-disable */
+/*eslint-disable */
 const catchAsync = require('../utils/catchAsync');
 const Order = require('../models/orderModel');
+const Product = require('../models/productModel');
 const AppError = require('../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
 
@@ -17,13 +18,6 @@ exports.getAllOrders = catchAsync(async (req, res) => {
     },
   });
 });
-
-exports.getOrder = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet implemented',
-  });
-};
 
 exports.createOrder = catchAsync(async (req, res) => {
   const newOrder = await Order.create(req.body);
@@ -63,7 +57,15 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 });
 
 exports.getOrder = catchAsync(async (req, res) => {
-  const order = await Order.findById(req.params.id);
+  const order = await Order.findById(req.params.id)
+  .populate('user').
+  populate({
+    path: 'products',
+    populate: {
+      path: 'product',
+      model: Product
+    }
+  });
   res.status(200).json({
     status: 'success',
     data: {
