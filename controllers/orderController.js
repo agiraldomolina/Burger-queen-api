@@ -2,13 +2,21 @@
 const catchAsync = require('../utils/catchAsync');
 const Order = require('../models/orderModel');
 const AppError = require('../utils/appError');
+const APIFeatures = require('../utils/apiFeatures');
 
-exports.getAllOrders = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet implemented',
+exports.getAllOrders = catchAsync(async (req, res) => {
+  const features = new APIFeatures(Order.find(), req.query)
+    .paginate();
+  const orders = await features.query;
+  // Send TO THE CLIENT
+  res.status(200).json({
+    status: 'success',
+    results: orders.length,
+    data: {
+      orders,
+    },
   });
-};
+});
 
 exports.getOrder = (req, res) => {
   res.status(500).json({
@@ -28,17 +36,17 @@ exports.createOrder = catchAsync(async (req, res) => {
 });
 
 exports.updateOrder = catchAsync(async (req, res, next) => {
-  // const order = await Order.findById(req.params.id);
-  // if (!order) {
-  //   return next(new AppError('No order found with that ID', 404));
-  // }
+  try {
+    await Order.findById(req.params.id);
+  } catch (err) {
+    return next(new AppError('No order found with that ID', 404));
+  }
+
   const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
-  if (!updatedOrder) {
-    return next(new AppError('No order found with that ID', 404));
-  }
+
   if (updatedOrder.status === 'delivered') {
     updatedOrder.dateProcessed = Date.now();
   } else {
@@ -54,9 +62,20 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteOrder = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet implemented',
+exports.getOrder = catchAsync(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  res.status(200).json({
+    status: 'success',
+    data: {
+      order,
+    },
   });
-};
+});
+
+exports.deleteOrder = catchAsync(async (req, res) => {
+  await Order.findByIdAndDelete(req.params.id);
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});

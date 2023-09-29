@@ -88,36 +88,17 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
         status: 'error',
         message: 'This route for update user is not yet implemented',
       });
-    // const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body,
-    //     {
-    //         new: true,
-    //         runValidators: true,
-    //       });
-    // if (!updatedOrder) {
-    // return next(new AppError('No order found with that ID', 404));
-    // }
-   
-    // res.status(200).json({
-    //     status:'success',
-    //     data: {
-    //         updatedOrder
-    //     }
-    // })       
   })
   
   
   exports.getUser = catchAsync( async(req, res) =>{
-    res.status(500).json({
-        status: 'error',
-        message: 'This route for get user is not yet implemented',
-      });
-    // const order = await Order.findById(req.params.id);
-    // res.status(200).json({
-    //     status:'success',
-    //     data: {
-    //         order
-    //     }
-    // });    
+    const user = await User.findById(req.params.id);
+    res.status(200).json({
+        status:'success',
+        data: {
+            user
+        }
+    });    
   })
   
   exports.createUser =catchAsync( async (req, res) =>{
@@ -136,18 +117,12 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
   
   exports.deleteUser = catchAsync(async (req, res) =>{
     // Get and delete user based on email    
-    const deletedUser = await User.findOneAndDelete({email: req.body.email});
-    if (!deletedUser) {
-      return next(new AppError('No user found with that email address', 404))
-    };
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet implemented',
-      });
-    // await Order.findByIdAndDelete(req.params.id);
-    // res.status(204).json({
-    //     status:'success',
-    //     data: null
-    // });
+    await User.findByIdAndDelete(req.params.id);
+    
+    res.status(204).json({
+        status:'success',
+        data: null
+    });
+  
   });
   

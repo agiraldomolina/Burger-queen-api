@@ -7,14 +7,14 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(orderController.getAllOrders)
+  .get(authController.protect, orderController.getAllOrders)
   .post(authController.protect,  orderController.createOrder);
 
 router
   .route("/:id")
-  .get(orderController.getOrder)
-  .patch(orderController.updateOrder)
-  .delete(orderController.deleteOrder);
+  .get(authController.protect, orderController.getOrder)
+  .patch(authController.protect, orderController.updateOrder)
+  .delete(authController.protect, orderController.deleteOrder);
 
 module.exports = router;
 
