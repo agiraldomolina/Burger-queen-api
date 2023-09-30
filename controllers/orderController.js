@@ -13,6 +13,8 @@ exports.setUserId = (req, res, next) => {
 
 exports.createOrder = factory.createOne(Order);
 exports.deleteOrder = factory.deleteOne(Order);
+exports.getOrder = factory.getOne(Order);
+
 exports.getAllOrders = catchAsync(async (req, res,next) => {
   // With this filter and merge option in the order Routes its possible to nest paths: /GET /users/:userId/orders
   let filter = {};
@@ -68,14 +70,14 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getOrder = catchAsync(async (req, res,next) => {
-  const order = await Order.findById(req.params.id)
-  res.status(200).json({
-    status: 'success',
-    data: {
-      order,
-    },
-  });
-});
+// exports.getOrder = catchAsync(async (req, res,next) => {
+//   const order = await Order.findById(req.params.id)
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       order,
+//     },
+//   });
+// });
 
 

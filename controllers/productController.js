@@ -6,6 +6,7 @@ const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
 exports.createProduct = factory.createOne(Product);
+exports.getProduct =  factory.getOne(Product);
 exports.updateProduct = factory.updateOne(Product);
 exports.deleteProduct = factory.deleteOne(Product);
 
@@ -27,15 +28,15 @@ exports.getAllProducts = catchAsync(async (req, res,next) =>{
 
 
 
-exports.getProduct = catchAsync( async(req, res) =>{
-    const tour = await Product.findById(req.params.id);
-    res.status(200).json({
-        status:'success',
-        data: {
-            tour
-        }
-    });    
-})
+// exports.getProduct = catchAsync( async(req, res) =>{
+//     const tour = await Product.findById(req.params.id);
+//     res.status(200).json({
+//         status:'success',
+//         data: {
+//             tour
+//         }
+//     });    
+// })
 
 // exports.createProduct =catchAsync( async (req, res) =>{
 //     const newProduct = await Product.create(req.body);
