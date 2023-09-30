@@ -83,16 +83,27 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
     })
   })
   
-  exports.updateUser = catchAsync(async (req, res) =>{
-    res.status(500).json({
-        status: 'error',
-        message: 'This route for update user is not yet implemented',
-      });
-  })
+  exports.updateUser= catchAsync(async (req, res) =>{
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body,
+        {
+            new: true,
+            runValidators: true,
+          });
+    if (!updatedUser) {
+    return next(new AppError('No product found with that ID', 404));
+    }
+   
+    res.status(200).json({
+        status:'success',
+        data: {
+            updatedUser
+        }
+    })       
+})
   
   
   exports.getUser = catchAsync( async(req, res) =>{
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate('orders');
     res.status(200).json({
         status:'success',
         data: {

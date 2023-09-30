@@ -23,8 +23,8 @@ router
 
 router
   .route("/:id")
-  .get(authController.protect, userController.getUser)
-  .patch(userController.updateUser)
+  .get(userController.getUser)
+  .patch (authController.protect, authController.restrictTo('admin'), userController.updateUser)
   
   .delete(authController.protect, authController.restrictTo('admin'), userController.deleteUser);
 

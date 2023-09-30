@@ -46,6 +46,18 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false,
   },
+}
+,
+{
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+},
+);
+
+userSchema.virtual('orders', {
+  ref: 'Order',
+  localField: '_id',
+  foreignField: 'user',
 });
 
 // Nest middleware encryts the password

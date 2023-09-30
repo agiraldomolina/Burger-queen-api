@@ -5,7 +5,7 @@ const Product = require('../models/productModel');
 const AppError = require('../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
 
-exports.getAllOrders = catchAsync(async (req, res) => {
+exports.getAllOrders = catchAsync(async (req, res,next) => {
   const features = new APIFeatures(Order.find(), req.query)
     .paginate();
   const orders = await features.query;
@@ -20,6 +20,7 @@ exports.getAllOrders = catchAsync(async (req, res) => {
 });
 
 exports.createOrder = catchAsync(async (req, res) => {
+  if (!req.body.user) req.body.user = req.user.id;
   const newOrder = await Order.create(req.body);
   res.status(201).json({
     status: 'success',
@@ -56,20 +57,8 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getOrder = catchAsync(async (req, res) => {
+exports.getOrder = catchAsync(async (req, res,next) => {
   const order = await Order.findById(req.params.id)
-  .populate({
-    path: 'user',
-    select: '-__v -_id '
-  }).
-  populate({
-    path: 'products',
-    populate: {
-      path: 'product',
-      model: Product,
-      select: '-__v -_id -image'
-    }
-  });
   res.status(200).json({
     status: 'success',
     data: {

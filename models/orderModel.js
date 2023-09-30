@@ -32,6 +32,28 @@ const orderSchema = new mongoose.Schema({
     default: Date.now,
   },
   dateProcessed: Date,
+},
+{
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+},
+);
+
+// Middleware that executes populate on each query
+orderSchema.pre(/^find/, function (next) {
+  this .populate({
+    path: 'user',
+    select: '-__v -_id '
+  }).
+  populate({
+    path: 'products',
+    populate: {
+      path: 'product',
+      model: Product,
+      select: '-__v -_id -image -type'
+    }
+  });
+  next();
 });
 
 orderSchema.pre('updateOne', async function (next) {
