@@ -84,23 +84,7 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
     })
   })
   
-  exports.updateUser= catchAsync(async (req, res) =>{
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body,
-        {
-            new: true,
-            runValidators: true,
-          });
-    if (!updatedUser) {
-    return next(new AppError('No product found with that ID', 404));
-    }
-   
-    res.status(200).json({
-        status:'success',
-        data: {
-            updatedUser
-        }
-    })       
-})
+ 
   
   
   exports.getUser = catchAsync( async(req, res) =>{
@@ -127,5 +111,6 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
     // });
   });
 
+  exports.updateUser= factory.updateOne(User);
   exports.deleteUser = factory.deleteOne(User);
   

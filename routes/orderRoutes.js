@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 router
   .route("/")
   .get(authController.protect, orderController.getAllOrders)
-  .post(authController.protect,authController.restrictTo('waiter'), orderController.createOrder);
+  .post(authController.protect,authController.restrictTo('waiter'), orderController.setUserId, orderController.createOrder);
 
 router
   .route("/:id")

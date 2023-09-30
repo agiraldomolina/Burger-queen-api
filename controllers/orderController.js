@@ -6,6 +6,13 @@ const AppError = require('../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
 const factory = require('./handlerFactory');
 
+exports.setUserId = (req, res, next) => {
+  if (!req.body.user) req.body.user = req.user.id;
+  next();
+};
+
+exports.createOrder = factory.createOne(Order);
+exports.deleteOrder = factory.deleteOne(Order);
 exports.getAllOrders = catchAsync(async (req, res,next) => {
   // With this filter and merge option in the order Routes its possible to nest paths: /GET /users/:userId/orders
   let filter = {};
@@ -23,16 +30,16 @@ exports.getAllOrders = catchAsync(async (req, res,next) => {
   });
 });
 
-exports.createOrder = catchAsync(async (req, res) => {
-  if (!req.body.user) req.body.user = req.user.id;
-  const newOrder = await Order.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    data: {
-      order: newOrder,
-    },
-  });
-});
+// exports.createOrder = catchAsync(async (req, res) => {
+//   if (!req.body.user) req.body.user = req.user.id;
+//   const newOrder = await Order.create(req.body);
+//   res.status(201).json({
+//     status: 'success',
+//     data: {
+//       order: newOrder,
+//     },
+//   });
+// });
 
 exports.updateOrder = catchAsync(async (req, res, next) => {
   try {
@@ -71,4 +78,4 @@ exports.getOrder = catchAsync(async (req, res,next) => {
   });
 });
 
-exports.deleteOrder = factory.deleteOne(Order);
+
