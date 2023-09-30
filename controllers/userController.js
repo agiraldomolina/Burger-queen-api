@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
+const factory = require('./handlerFactory');
 
 const filterObject = (obj, ...allowedFields) => {
   const newObj = {};
@@ -125,15 +126,6 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
     //     }
     // });
   });
-  
-  exports.deleteUser = catchAsync(async (req, res) =>{
-    // Get and delete user based on email    
-    await User.findByIdAndDelete(req.params.id);
-    
-    res.status(204).json({
-        status:'success',
-        data: null
-    });
-  
-  });
+
+  exports.deleteUser = factory.deleteOne(User);
   

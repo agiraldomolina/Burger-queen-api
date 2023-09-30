@@ -4,9 +4,13 @@ const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 const AppError = require('../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
+const factory = require('./handlerFactory');
 
 exports.getAllOrders = catchAsync(async (req, res,next) => {
-  const features = new APIFeatures(Order.find(), req.query)
+  // With this filter and merge option in the order Routes its possible to nest paths: /GET /users/:userId/orders
+  let filter = {};
+  if(req.params.userId) filter = { user: req.params.userId };
+  const features = new APIFeatures(Order.find(filter), req.query)
     .paginate();
   const orders = await features.query;
   // Send TO THE CLIENT
@@ -67,10 +71,4 @@ exports.getOrder = catchAsync(async (req, res,next) => {
   });
 });
 
-exports.deleteOrder = catchAsync(async (req, res) => {
-  await Order.findByIdAndDelete(req.params.id);
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+exports.deleteOrder = factory.deleteOne(Order);

@@ -3,7 +3,11 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
+const orderRouter = require('../routes/orderRoutes')
+
 const router = express.Router();
+
+router.use('/:userId/orders', orderRouter);
 
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);

@@ -3,6 +3,7 @@ const Product = require('../models/productModel')
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 exports.getAllProducts = catchAsync(async (req, res,next) =>{
     //const products = await Product.find();
@@ -58,13 +59,8 @@ exports.createProduct =catchAsync( async (req, res) =>{
     });
 });
 
-exports.deleteProduct = catchAsync(async (req, res) =>{
-    await Product.findByIdAndDelete(req.params.id);
-    res.status(204).json({
-        status:'success',
-        data: null
-    });
-});
+exports.deleteProduct = factory.deleteOne(Product);
+
 
 exports.getAvgPrice = async (req, res) =>{
     try {
