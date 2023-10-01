@@ -23,7 +23,7 @@ router.patch('/unDeleteMe',  userController.unDeleteMe);
 router
   .route("/")
   .get( userController.getAllUser)
-  .post(userController.createUser);
+  .post( userController.createUser)
 
 router
   .route("/:id")

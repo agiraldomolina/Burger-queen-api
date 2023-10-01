@@ -9,21 +9,22 @@ exports.createProduct = factory.createOne(Product);
 exports.getProduct =  factory.getOne(Product);
 exports.updateProduct = factory.updateOne(Product);
 exports.deleteProduct = factory.deleteOne(Product);
+exports.getAllProducts = factory.getAll(Product);
 
-exports.getAllProducts = catchAsync(async (req, res,next) =>{
-    //const products = await Product.find();
-    const features = new APIFeatures(Product.find(), req.query)
-    .paginate()
-    const products = await features.query;
-    //Send TO THE CLIENT
-    res.status(200).json({
-        status:'success',
-        results: products.length,
-        data: {
-            products
-        }
-    });
-});
+// exports.getAllProducts = catchAsync(async (req, res,next) =>{
+//     //const products = await Product.find();
+//     const features = new APIFeatures(Product.find(), req.query)
+//     .paginate()
+//     const products = await features.query;
+//     //Send TO THE CLIENT
+//     res.status(200).json({
+//         status:'success',
+//         results: products.length,
+//         data: {
+//             products
+//         }
+//     });
+// });
 
 
 

@@ -31,6 +31,7 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
   });
 
   exports.updateMe = catchAsync(async (req, res,next) =>{
+    // Upadate cuurent user
     // Create error if user POSTs password data
     if(req.body.password || req.body.passwordConfirm) {
       return next(new AppError('This route is not for password update, please use /updateMyPasssword', 500));
@@ -55,6 +56,7 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
   });
 
   exports.deleteMe = catchAsync(async (req, res,next) =>{
+    // Get user and desactivate based on email    
     await User.findByIdAndUpdate(req.user.id, {active: false}, {new: true});
 
     res.status(204).json({
@@ -68,7 +70,7 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
   });
 
   exports.unDeleteMe = catchAsync(async (req, res, next) =>{
-    // Get and update user based on email    
+    // Get and activate user based on email    
     const unDeletedUser = await User.findOneAndUpdate({email: req.body.email}, {active: true}, { returnOriginal: false
     });
     if (!unDeletedUser) {
@@ -82,35 +84,17 @@ exports.getAllUser = catchAsync(async (req, res,next) =>{
         data: unDeletedUser,
       },
     })
-  })
-  
- 
-  
-  
-  exports.getUser = catchAsync( async(req, res) =>{
-    const user = await User.findById(req.params.id).populate('orders');
-    res.status(200).json({
-        status:'success',
-        data: {
-            user
-        }
-    });    
-  })
-  
-  exports.createUser =catchAsync( async (req, res) =>{
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet implemented',
-      });
-    // const newOrder = await Order.create(req.body);
-    // res.status(201).json({
-    //     status:'success',
-    //     data: {
-    //         Order: newOrder
-    //     }
-    // });
   });
 
+  exports.createUser = catchAsync(async (req, res,next) =>{
+    res.status(500).json({
+      status: 'error',
+      message: 'This route is not defined. Please use /signup instead',
+      data: null,
+    })
+  });
+
+  exports.getAllUsers = factory.getAll(User);
   exports.getUser = factory.getOne(User);
   exports.updateUser= factory.updateOne(User);
   exports.deleteUser = factory.deleteOne(User);

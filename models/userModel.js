@@ -60,6 +60,8 @@ userSchema.virtual('orders', {
   foreignField: 'user',
 });
 
+
+
 // Nest middleware encryts the password
 userSchema.pre('save', async function (next) {
   // Only run this function when the password has been modified
@@ -118,6 +120,14 @@ userSchema.methods.createPasswordResetToken = function () {
 
   return resetToken;
 };
+
+// userSchema.pre(/^find/, function(next) {
+//   this.populate({
+//     path: 'orders',
+//     model: 'Order',
+//   });
+//   next();
+// })
 
 const User = mongoose.model('User', userSchema); // model for creating doccuments
 

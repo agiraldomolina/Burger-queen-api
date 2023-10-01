@@ -1,6 +1,7 @@
 /*eslint-disable*/
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const APIFeatures = require('../utils/apiFeatures');
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -13,9 +14,11 @@ exports.createOne = (Model) =>
     });
   });
 
-  exports.getOne = (Model) =>
+  exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findById(req.params.id);
+    let query = Model.findById(req.params.id);
+    if (popOptions) query = query.populate(popOptions);
+    const doc = await query;
 
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
@@ -27,6 +30,23 @@ exports.createOne = (Model) =>
       },
     });
   });
+
+  exports.getAll = (Model) =>  catchAsync(async (req, res,next) =>{
+    //const docs = await Product.find();
+    const features = new APIFeatures(Model.find(), req.query)
+    .paginate()
+    const docs = await features.query;
+    //Send TO THE CLIENT
+    res.status(200).json({
+        status:'success',
+        results: docs.length,
+        data: {
+            data: docs
+        }
+    });
+});
+
+  
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
