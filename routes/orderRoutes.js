@@ -3,7 +3,7 @@ const express = require("express");
 const orderController = require('../controllers/orderController');
 const authController = require('../controllers/authController');
 
-//const router = express.Router();
+// mergeParams is used to allow accsess to the orders parameters in others routes  for exapmle: users/6510eb81e51bfa4ad45da488/orders
 const router = express.Router({ mergeParams: true });
 
 router

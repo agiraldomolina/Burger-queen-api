@@ -5,20 +5,20 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-//router.route('/avg-price').get(productController.getAvgPrice);
+router
+.route('/')
+.get(authController.protect, productController.getAllProducts)
+.post(authController.protect, authController.restrictTo('admin'), productController.createProduct);
 
 router
-  .route('/')
-  .get(authController.protect, productController.getAllProducts)
-  .post(authController.protect, authController.restrictTo('admin'), productController.createProduct);
-
-router
-    .route('/:id')
-    .get(authController.protect, productController.getProduct)
-    .patch(authController.protect, authController.restrictTo('admin'), productController.updateProduct)
-   .delete(authController.protect, authController.restrictTo('admin'), productController.deleteProduct);
+.route('/:id')
+.get(authController.protect, productController.getProduct)
+.patch(authController.protect, authController.restrictTo('admin'), productController.updateProduct)
+.delete(authController.protect, authController.restrictTo('admin'), productController.deleteProduct);
 
 module.exports = router;
+
+//router.route('/avg-price').get(productController.getAvgPrice);
 
 
 // const {

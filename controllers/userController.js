@@ -16,19 +16,11 @@ const filterObject = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUser = catchAsync(async (req, res,next) =>{
-    const features = new APIFeatures(User.find(), req.query)
-    .paginate()
-    const users = await features.query;
-    //Send TO THE CLIENT
-    res.status(200).json({
-        status:'success',
-        results: users.length,
-        data: {
-            users
-        }
-    });
-  });
+// Middleware to get Id of logged in user
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
   exports.updateMe = catchAsync(async (req, res,next) =>{
     // Upadate cuurent user

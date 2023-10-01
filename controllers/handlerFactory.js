@@ -32,8 +32,10 @@ exports.createOne = (Model) =>
   });
 
   exports.getAll = (Model) =>  catchAsync(async (req, res,next) =>{
+    let filter = {};
+    if(req.params.userId) filter = { user: req.params.userId };
     //const docs = await Product.find();
-    const features = new APIFeatures(Model.find(), req.query)
+    const features = new APIFeatures(Model.find(filter), req.query)
     .paginate()
     const docs = await features.query;
     //Send TO THE CLIENT
