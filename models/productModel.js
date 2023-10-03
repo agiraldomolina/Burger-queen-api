@@ -30,7 +30,10 @@ const producSchema = new mongoose.Schema({
       type: Date,
       default: Date.now,
       select: false
-    }
+    },
+  },
+  {
+    versionKey: false
   });
   
   const Product = mongoose.model('product', producSchema);

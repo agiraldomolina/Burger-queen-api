@@ -6,12 +6,7 @@ const APIFeatures = require('../utils/apiFeatures');
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const newDoc = await Model.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      data: {
-        data: newDoc,
-      },
-    });
+    res.json(newDoc);
   });
 
   exports.getOne = (Model, popOptions) =>
@@ -23,12 +18,7 @@ exports.createOne = (Model) =>
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
     }
-    res.status(200).json({
-      status: 'success',
-      data: {
-        data: doc,
-      },
-    });
+    res.json(doc);
   });
 
   exports.getAll = (Model) =>  catchAsync(async (req, res,next) =>{
