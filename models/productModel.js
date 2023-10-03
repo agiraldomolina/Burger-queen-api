@@ -29,7 +29,6 @@ const producSchema = new mongoose.Schema({
     dateEntry:{
       type: Date,
       default: Date.now,
-      select: false
     },
   },
   {

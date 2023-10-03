@@ -1,11 +1,18 @@
 /*eslint-disable*/
 const mongoose = require('mongoose');
-const Product = require('../models/productModel');
+const AppError = require('../utils/appError')
 
 const productOrderSchema = new mongoose.Schema(
   {
     qty: { type: Number, required: true },
-    product: { type: mongoose.Schema.ObjectId, ref: 'Product', required: true },
+    product: {
+      id: { type: String },
+      name :{ type: String },
+      price: Number,
+      image: { type: String },
+      type: { type: String },
+      dateEntry: Date,
+    },
   },
   { _id: false },
 );
@@ -21,7 +28,9 @@ const orderSchema = new mongoose.Schema({
   },
 
   products: 
-    [productOrderSchema]
+    [
+  productOrderSchema
+    ]
   ,
   status: {
     type: String,
@@ -33,28 +42,28 @@ const orderSchema = new mongoose.Schema({
   },
   dateProcessed: Date,
 },
+{ versionKey: false },
 {
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
 },
 );
 
+orderSchema.pre('save' , { runValidators: false }, async function (next) {
+  
+  if(this.products.length === 0) next(new AppError('Please add products to order', 400))
+})
+
 // Middleware that executes populate on each query
 orderSchema.pre(/^find/, function (next) {
   this .populate({
     path: 'user',
     select: '-__v -_id -id -passwordChangedAt -passwordResetToken -passwordResetExpires'
-  }).
-  populate({
-    path: 'products',
-    populate: {
-      path: 'product',
-      model: Product,
-      select: '-__v -_id -image -type'
-    }
-  });
+  })
   next();
 });
+
+
 
 orderSchema.pre('updateOne', async function (next) {
 // Only run when status is modified

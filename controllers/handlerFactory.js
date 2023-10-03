@@ -32,13 +32,7 @@ exports.createOne = (Model) =>
       .paginate();
     const docs = await features.query;
     //Send TO THE CLIENT
-    res.status(200).json({
-        // status:'success',
-        // results: docs.length,
-        data: {
-            data: docs
-        }
-    });
+    res.json(docs);
 });
 
 
