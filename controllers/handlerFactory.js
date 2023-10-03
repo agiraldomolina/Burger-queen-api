@@ -36,19 +36,21 @@ exports.createOne = (Model) =>
     if(req.params.userId) filter = { user: req.params.userId };
     //const docs = await Product.find();
     const features = new APIFeatures(Model.find(filter), req.query)
-    .paginate()
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
     const docs = await features.query;
     //Send TO THE CLIENT
     res.status(200).json({
-        status:'success',
-        results: docs.length,
+        // status:'success',
+        // results: docs.length,
         data: {
             data: docs
         }
     });
 });
 
-  
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {

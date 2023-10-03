@@ -30,7 +30,7 @@ const __e2e = {
   // testObjects: [],
 };
 
-const fetch = (url, opts = {}) => import('node-fetch')
+const fetch = (url, opts = {}) => ('node-fetch')
   .then(({ default: fetch }) => fetch(`${baseUrl}${url}`, {
     ...opts,
     headers: {

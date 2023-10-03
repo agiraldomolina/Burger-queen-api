@@ -60,8 +60,6 @@ userSchema.virtual('orders', {
   foreignField: 'user',
 });
 
-
-
 // Nest middleware encryts the password
 userSchema.pre('save', async function (next) {
   // Only run this function when the password has been modified
@@ -77,7 +75,7 @@ userSchema.pre('save', async function (next) {
   // Only run this function when the password has been modified
   if(!this.isModified('password') || this.isNew) return next();
 
-  // Saving the password changedAt field into teh DB could take some time so adding 1 second  assures JWT is generated after
+  // Saving the password changedAt field into the DB could take some time so adding 1 second  assures JWT is generated after
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
@@ -90,6 +88,7 @@ userSchema.pre('find', async function (next) {
 })
 
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
+  console.log(candidatePassword, userPassword);
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 

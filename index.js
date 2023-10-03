@@ -1,12 +1,12 @@
 /*eslint-disable */
-const express = require("express");
-const morgan = require("morgan");
-const rateLimit = require("express-rate-limit");
-const helmet = require("helmet");
-const mongoSanitize = require("express-mongo-sanitize");
+const express = require('express');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
-const appError = require('./utils/appError')
-const globalErrorHandler = require('./controllers/errorController')
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
 
 const authRouter = require("./routes/authRoutes");
 const orderRouter = require("./routes/orderRoutes");
@@ -15,56 +15,87 @@ const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
-console.log(process.env.NODE_ENV);
-
-// Global MIDDLEWARES
+// 1 -  GLOBAL MIDDLEWARES
 // Set security HTTP headers
+console.log(process.env.NODE_ENV);
 app.use(helmet());
 
-// Development logging
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
-};
-/* 'Dev' is one of the predefined logging formats provided by Morgan. This logging format displays basic information about each incoming request, such as the HTTP method, the route, the status code, and the response time.*/
+// Development logging middleware
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
-// Limit requests from an IP to 100 requests per hour
+// Limits request from same IP
 const limiter = rateLimit({
-  max : 100,
-  windowMs : 60 * 60 * 1000,
-  message: 'To many requests from this IP, please try again in an hour.'
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!',
 });
 
-app.use('/', limiter);
+app.use('/api', limiter);
 
+// Body parser middleware, reading data from body into req.body
+app.use(express.json({ limit: '10kb' }));
 
-/* Next middleware is used to ensure that your Express application can understand and work with JSON data sent in incoming requests. This is crucial for many modern web applications, as JSON is a common format for exchanging data between the client and server in API (Application Programming Interface)-based web applications*/
-
-// Body parser, reading data from the body into req.body
-app.use(express.json({limit: '10kb'}));
-
-//Data sanitation against NoSQL injection
+// Data sanititation againts NoSQL query injection
 app.use(mongoSanitize());
 
-// Test middleware
+// Data sanititation againts XSS
+
+// This middleware allows the app access to the public files and open static files.
+app.use(express.static(`${__dirname}/public`));
+
+// Tests middelwares
+app.use((req, res, next) => {
+  console.log('Hello from the middleware 👋');
+  next();
+});
+
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   //console.log(req.headers);
   next();
-})
+});
 
+// 3- ROUTES
 app.use('/login', authRouter);
 app.use("/orders", orderRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 
+
 app.all('*', (req, res, next) => {
-  next(new appError(`Can't find ${req.originalUrl} on this server`, 400));
+  // res.status(404).json({
+  //   status: 'fail',
+  //   message: `Can't find ${req.originalUrl} on this server!`
+  // });
+  // const err = new Error(`Can't find ${req.originalUrl} on this server!`);
+  // err.statusCode = 404;
+  // err.status = 'fail';
+
+  //next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+
+  const err = new Error(`Can't find ${req.originalUrl} on this server!`)
+  err.status = 'fail';
+  err.statusCode = 404;
+  next(err);
 });
 
-app.use(globalErrorHandler.cathMyErrors);
+// Middleware to catch globlas errors
+//app.use(globalErrorHandler);
+app.use((err,req,res,next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status= err.status || 'error';
 
+  res.status(err.statusCode).json({
+    status: res.status,
+    message: err.message,
+    
+  })
+})
 
 module.exports = app;
+
 
 // const config = require("./config");
 // const authMiddleware = require("./middleware/auth");
