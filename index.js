@@ -65,29 +65,27 @@ app.use("/products", productRouter);
 
 
 app.all('*', (req, res, next) => {
-  // res.status(404).json({
-  //   status: 'fail',
-  //   message: `Can't find ${req.originalUrl} on this server!`
-  // });
+  
   // const err = new Error(`Can't find ${req.originalUrl} on this server!`);
   // err.statusCode = 404;
   // err.status = 'fail';
 
   //next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 
-  const err = new Error(`Can't find ${req.originalUrl} on this server!`)
-  err.status = 'fail';
-  err.statusCode = 404;
-  next(err);
+  
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 // Middleware to catch globlas errors
 //app.use(globalErrorHandler);
 app.use((err,req,res,next) => {
+  console.log(err.stack)
   err.statusCode = err.statusCode || 500;
   err.status= err.status || 'error';
 
   res.status(err.statusCode).json({
+    
+
     status: res.status,
     message: err.message,
     
