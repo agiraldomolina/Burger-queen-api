@@ -24,15 +24,8 @@ const createSendToken = (user, statusCode, res) => {
 
   res.cookie('jwt', token, cookieOptions );
 
-  // Remove password from out
-  user.password = undefined;
-
-  res.status(statusCode).json({
-    status: 'success',
+  res.json({
     token,
-    data: {
-      user
-    },
   });
 }
 
@@ -52,11 +45,13 @@ exports.login = catchAsync(async (req, res, next) => {
   // Check if user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
   if (!user || !(await user.correctPassword(password, user.password))) {
+    console.log("bad password");
     next(new AppError('Invalid credentials', 401));
+  }else{
+    // if everything is good, send token to client
+    console.log("good password");
+    createSendToken(user, 200, res);
   }
-
-  // if everything is good, send token to client
-  createSendToken(user, 200, res);
 });
 
 // Protect route to only authenticated users
