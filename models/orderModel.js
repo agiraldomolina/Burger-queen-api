@@ -18,7 +18,7 @@ const productOrderSchema = new mongoose.Schema(
 );
 
 const orderSchema = new mongoose.Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
   },
@@ -57,8 +57,8 @@ orderSchema.pre('save' , { runValidators: false }, async function (next) {
 // Middleware that executes populate on each query
 orderSchema.pre(/^find/, function (next) {
   this .populate({
-    path: 'user',
-    select: '-__v -_id -id -passwordChangedAt -passwordResetToken -passwordResetExpires'
+    path: 'userId',
+    select: '_id'
   })
   next();
 });

@@ -8,7 +8,7 @@ const factory = require('./handlerFactory');
 
 // Middleware used for get id from authenticated user
 exports.setUserId = (req, res, next) => {
-  if (!req.body.user) req.body.user = req.user.id;
+  if (!req.body.userId) req.body.userId = req.user.id;
   next();
 };
 

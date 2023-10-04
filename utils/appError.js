@@ -4,6 +4,7 @@ class AppError extends Error {
     super(message);
 
     this.statusCode = statusCode;
+    // console.log('Hi statusCode: '+ statusCode);
     this.status = `${statusCode}`.startsWith(4) ? 'failure' : 'error';
     this.isOperational = true;
 
