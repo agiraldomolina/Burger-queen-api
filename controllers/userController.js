@@ -24,7 +24,8 @@ exports.getMe = (req, res, next) => {
 
 exports.setAllowed = (req, res, next) => {
   console.log('Hi from setAllowed');
-  if(req.user.id === req.params.id || req.user.role === 'admin') {
+  if((req.user.id === req.params.id  && !req.body.role) || req.user.role === 'admin') {
+    console.log('Hi from first if');
     next();
   }else{
     console.log('You are not logged in');
