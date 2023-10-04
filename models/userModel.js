@@ -61,6 +61,15 @@ userSchema.virtual('orders', {
   foreignField: 'user',
 });
 
+userSchema.pre('save', function (next) {
+  console.log('Hi from here');
+  // Verifica si el usuario logeado es el propietario del usuario o es un administrador
+  if (this.isModified('role') || this.role !== 'admin') {
+    return next(new AppError('No tienes permiso para modificar el rol de este usuario', 403));
+  }
+  next();
+});
+
 // Nest middleware encryts the password
 userSchema.pre('save', async function (next) {
   // Only run this function when the password has been modified

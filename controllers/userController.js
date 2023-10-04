@@ -22,6 +22,17 @@ exports.getMe = (req, res, next) => {
   next();
 };
 
+exports.setAllowed = (req, res, next) => {
+  console.log('Hi from setAllowed');
+  if(req.user.id === req.params.id || req.user.role === 'admin') {
+    next();
+  }else{
+    console.log('You are not logged in');
+    return next(new AppError('You do not have permission to perform this action', 403))
+  }
+};
+
+
   exports.updateMe = catchAsync(async (req, res,next) =>{
     // Upadate cuurent user
     // Create error if user POSTs password data
