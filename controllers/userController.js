@@ -5,6 +5,45 @@ const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
+// Middleware to get Id of logged in user
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
+// Middleware to allow logged in user or admin to update
+exports.setAllowed = (req, res, next) => {
+  console.log('Hi from setAllowed');
+  // Only admin is allowed to update role
+  if((req.user.id === req.params.id  && !req.body.role) || req.user.role === 'admin') {
+    console.log('Hi from first if');
+    next();
+  }else{
+    console.log('You are not logged in');
+    return next(new AppError('You do not have permission to perform this action', 403))
+  }
+};
+
+
+exports.getAllUsers = factory.getAll(User);
+//exports.updateUser= factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
+exports.getUser = catchAsync(async (req, res, next) => {
+  const  identifier  = req.params.id;
+  let filter
+  identifier.includes('@')? filter = { email: identifier } : filter = { _id: identifier };
+  const user = await User.findOne(filter);
+  if (!user) {
+    return next(new AppError('No user found with that email', 404));
+  }
+
+  res.json(user);
+});
+
+exports.updateUser =
+
+// Next code was hicking up to be used in the future
+
 const filterObject = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((key) => {
@@ -16,22 +55,6 @@ const filterObject = (obj, ...allowedFields) => {
   return newObj;
 };
 
-// Middleware to get Id of logged in user
-exports.getMe = (req, res, next) => {
-  req.params.id = req.user.id;
-  next();
-};
-
-exports.setAllowed = (req, res, next) => {
-  console.log('Hi from setAllowed');
-  if((req.user.id === req.params.id  && !req.body.role) || req.user.role === 'admin') {
-    console.log('Hi from first if');
-    next();
-  }else{
-    console.log('You are not logged in');
-    return next(new AppError('You do not have permission to perform this action', 403))
-  }
-};
 
 
   exports.updateMe = catchAsync(async (req, res,next) =>{
@@ -50,7 +73,7 @@ exports.setAllowed = (req, res, next) => {
     const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {new: true, runValidators: true});
     console.log(updatedUser);
 
-    res.status(200).json({
+    re.json({
       status:'success',
       data: {
         user:  updatedUser
@@ -98,8 +121,5 @@ exports.setAllowed = (req, res, next) => {
     })
   });
 
-  exports.getAllUsers = factory.getAll(User);
-  exports.getUser = factory.getOne(User);
-  exports.updateUser= factory.updateOne(User);
-  exports.deleteUser = factory.deleteOne(User);
+ 
   

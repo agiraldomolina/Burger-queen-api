@@ -30,19 +30,19 @@ const __e2e = {
   // testObjects: [],
 };
 
-const fetch = (url, opts = {}) => ('node-fetch')
-  .then(({ default: fetch }) => fetch(`${baseUrl}${url}`, {
-    ...opts,
-    headers: {
-      'content-type': 'application/json',
-      ...opts.headers,
-    },
-    ...(
-      opts.body && typeof opts.body !== 'string'
-        ? { body: JSON.stringify(opts.body) }
-        : {}
-    ),
-  }));
+// const fetch = (url, opts = {}) => ('node-fetch')
+//   .then(({ default: fetch }) => fetch(`${baseUrl}${url}`, {
+//     ...opts,
+//     headers: {
+//       'content-type': 'application/json',
+//       ...opts.headers,
+//     },
+//     ...(
+//       opts.body && typeof opts.body !== 'string'
+//         ? { body: JSON.stringify(opts.body) }
+//         : {}
+//     ),
+//   }));
 
 const fetchWithAuth = (token) => (url, opts = {}) => fetch(url, {
   ...opts,
@@ -73,7 +73,7 @@ const createTestUser = () => fetchAsAdmin('/users', {
   })
   .then(({ token }) => Object.assign(__e2e, { testUserToken: token }));
 
-const checkAdminCredentials = () => fetch('/auth', {
+const checkAdminCredentials = () => fetch('/login', {
   method: 'POST',
   body: __e2e.adminUserCredentials,
 })
@@ -99,7 +99,7 @@ const waitForServerToBeReady = (retries = 10) => new Promise((resolve, reject) =
           : resolve()
       ))
       .catch(() => waitForServerToBeReady(retries - 1).then(resolve, reject));
-  }, 1000);
+  }, 10000);
 });
 
 module.exports = () => new Promise((resolve, reject) => {

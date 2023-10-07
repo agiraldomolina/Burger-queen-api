@@ -19,7 +19,7 @@ router.patch('/unDeleteMe',  userController.unDeleteMe);
 // Next middlware protect next routes preventing access only to logged in users
 router.use(authController.protect);
 
-router.get('/me',userController.getMe, userController.getUser);
+//router.get('/me',userController.getMe, userController.getUser);
 
 router.patch('/updateMyPassword', authController.updatePassword); 
 router.patch('/updateMe',  userController.updateMe);
