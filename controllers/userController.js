@@ -26,23 +26,10 @@ exports.setAllowed = (req, res, next) => {
 
 
 exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
 exports.updateUser= factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
-exports.getUser = catchAsync(async (req, res, next) => {
-  const  identifier  = req.params.id;
-  let filter
-  identifier.includes('@')? filter = { email: identifier } : filter = { _id: identifier };
-  const user = await User.findOne(filter);
-  if (!user) {
-    return next(new AppError('No user found with that email', 404));
-  }
 
-  res.json(user);
-});
-
-// exports.updateUser =catchAsync(async (req, res, next) => {
-
-// })
 
 // Next code was hicking up to be used in the future
 

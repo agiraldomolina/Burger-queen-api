@@ -11,7 +11,10 @@ exports.createOne = (Model) =>
 
   exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
+    const identifier = req.params.id;
+    let filter
+    identifier.includes('@')? filter = { email: identifier } : filter = { _id: identifier };
+    let query = Model.findOne(filter);
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
 
