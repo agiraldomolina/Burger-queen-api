@@ -26,7 +26,7 @@ exports.setAllowed = (req, res, next) => {
 
 
 exports.getAllUsers = factory.getAll(User);
-//exports.updateUser= factory.updateOne(User);
+exports.updateUser= factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
 exports.getUser = catchAsync(async (req, res, next) => {
   const  identifier  = req.params.id;
@@ -40,7 +40,9 @@ exports.getUser = catchAsync(async (req, res, next) => {
   res.json(user);
 });
 
-exports.updateUser =
+// exports.updateUser =catchAsync(async (req, res, next) => {
+
+// })
 
 // Next code was hicking up to be used in the future
 
