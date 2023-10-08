@@ -31,13 +31,13 @@ router.delete('/deleteMe',  userController.deleteMe);
 router
   .route("/")
   .get(userController.getAllUsers)
- // .post(authController.restrictTo('admin'), authController.signup)
+  .post(userController.createUser)
 
 router
   .route("/:id")
   .get(userController.getUser)
   .patch (userController.setAllowed, userController.updateUser)
-  .delete(authController.restrictTo('admin'), userController.deleteUser);
+  .delete(userController.deleteUser);
 
 module.exports = router;
 
