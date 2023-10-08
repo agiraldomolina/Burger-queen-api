@@ -27,17 +27,17 @@ const userSchema = new mongoose.Schema({
     minLength: [8, 'A user password must be at least 8 characters long'],
     select: false,
   },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'A user must have a password'],
-    validate: {
-      // This only works on CREATE and SAVE!!
-      validator: function (value) {
-        return value === this.password;
-      },
-      message: 'Passwords do not match',
-    },
-  },
+  // passwordConfirm: {
+  //   type: String,
+  //   required: [true, 'A user must have a password'],
+  //   validate: {
+  //     // This only works on CREATE and SAVE!!
+  //     validator: function (value) {
+  //       return value === this.password;
+  //     },
+  //     message: 'Passwords do not match',
+  //   },
+  // },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
@@ -61,14 +61,14 @@ userSchema.virtual('orders', {
   foreignField: 'user',
 });
 
-userSchema.pre('save', function (next) {
-  console.log('Hi from here');
-  // Verifica si el usuario logeado es el propietario del usuario o es un administrador
-  if (this.isModified('role') || this.role !== 'admin') {
-    return next(new AppError('No tienes permiso para modificar el rol de este usuario', 403));
-  }
-  next();
-});
+// userSchema.pre('save', function (next) {
+//   console.log('Hi from here');
+//   // Verifica si el usuario logeado es el propietario del usuario o es un administrador
+//   if (this.isModified('role') || this.role !== 'admin') {
+//     return next(new AppError('No tienes permiso para modificar el rol de este usuario', 403));
+//   }
+//   next();
+// });
 
 // Nest middleware encryts the password
 userSchema.pre('save', async function (next) {

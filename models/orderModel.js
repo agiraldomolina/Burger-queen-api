@@ -63,21 +63,13 @@ orderSchema.pre(/^find/, function (next) {
   next();
 });
 
-
-
-orderSchema.pre('updateOne', async function (next) {
-// Only run when status is modified
-// console.log("hello from orderSchema pre save");
-// console.log(this.isModified('client'));
-// console.log(this.isNew);
-  // if (!this.isModified('status') || this.isNew) {
-  //   console.log("hi there");
-  //   return next()};
-
+orderSchema.pre('save',  async function (next) {
   if (this.status === 'delivered') {
-    console.log("hi there delivered");
+    console.log('hello from delivered');
+    console.log('hello from delivered');
     this.dateProcessed = Date.now();
-    console.log(this);
+  } else {
+    this.dateProcessed = undefined;
   }
   next();
 });

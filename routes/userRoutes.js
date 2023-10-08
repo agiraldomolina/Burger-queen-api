@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.use('/:userId/orders', orderRouter);
 
-router.post('/signup', authController.signup);
+router.post('/', authController.signup);
 router.post('/login', authController.login);
 
 router.post('/forgotPassword', authController.forgotPassword);
@@ -31,13 +31,13 @@ router.delete('/deleteMe',  userController.deleteMe);
 router
   .route("/")
   .get(userController.getAllUsers)
-  .post(userController.createUser)
+ // .post(authController.restrictTo('admin'), authController.signup)
 
 router
   .route("/:id")
   .get(userController.getUser)
   .patch (userController.setAllowed, userController.updateUser)
-  .delete(userController.deleteUser);
+  .delete(authController.restrictTo('admin'), userController.deleteUser);
 
 module.exports = router;
 

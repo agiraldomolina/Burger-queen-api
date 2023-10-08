@@ -16,31 +16,6 @@ exports.createOrder = factory.createOne(Order);
 exports.deleteOrder = factory.deleteOne(Order);
 exports.getOrder = factory.getOne(Order);
 exports.getAllOrders = factory.getAll(Order);
+exports.updateOrder = factory.updateOne(Order);
 
-exports.updateOrder = catchAsync(async (req, res, next) => {
-  try {
-    await Order.findById(req.params.id);
-  } catch (err) {
-    return next(new AppError('No order found with that ID', 404));
-  }
-
-  const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (updatedOrder.status === 'delivered') {
-    updatedOrder.dateProcessed = Date.now();
-  } else {
-    updatedOrder.dateProcessed = undefined;
-  }
-  await updatedOrder.save();
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      order: updatedOrder,
-    },
-  });
-});
 
