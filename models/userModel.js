@@ -8,8 +8,8 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     // required: [true, 'Please provide a role'],
-    enum: ['admin', 'waiter','chef'],
-    default: 'waiter',
+    enum: ['admin', 'waiter','chef','user'],
+    default: 'user',
   },
   email: {
     type: String,

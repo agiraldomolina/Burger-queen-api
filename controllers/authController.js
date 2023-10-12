@@ -46,15 +46,13 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // Check if email and password exist
   if (!email || !password) {
-    next(new AppError('Please provide an email and password', 400));
+    return next(new AppError('Please provide an email and password', 400));
   }
 
   // Check if user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    next(new AppError('Invalid credentials', 401));
-  }
-
+  if (!user || !(await user.correctPassword(password, user.password)))
+    {return next(new AppError('Invalid credentials', 401))}
   // if everything is good, send token to client
   createSendToken(user, 200, res);
 });
@@ -92,6 +90,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 exports.restrictTo = (...roles) => (req, res, next) => {
+  console.log(req.user.role);
   if (!roles.includes(req.user.role)) {
     return next(new AppError('You are not authorized to perform this action', 403));
   }

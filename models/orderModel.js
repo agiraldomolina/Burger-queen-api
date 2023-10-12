@@ -43,7 +43,6 @@ const orderSchema = new mongoose.Schema({
 orderSchema.pre(/^find/, function (next) {
   this .populate({
     path: 'user',
-    select: '-__v -_id -id -passwordChangedAt -passwordResetToken -passwordResetExpires'
   }).
   populate({
     path: 'products',

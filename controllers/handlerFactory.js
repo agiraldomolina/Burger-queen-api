@@ -14,9 +14,14 @@ exports.createOne = (Model) =>
     });
   });
 
+  const getParam = (id) => {
+    return id.includes('@')? filter = { email: id } : filter = { _id: id };
+  }
+
   exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
+    const param = getParam(req.params.id);
+    let query = Model.findOne(param);
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
 
@@ -66,7 +71,8 @@ exports.deleteOne = (Model) =>
 
   exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+    const param = getParam(req.params.id);
+    const doc = await Model.findOneAndUpdate(param, req.body, {
       new: true,
       runValidators: true,
     });
