@@ -30,19 +30,19 @@ const __e2e = {
   // testObjects: [],
 };
 
-const fetch = (url, opts = {}) => ('node-fetch')
-  .then(({ default: fetch }) => fetch(`${baseUrl}${url}`, {
-    ...opts,
-    headers: {
-      'content-type': 'application/json',
-      ...opts.headers,
-    },
-    ...(
-      opts.body && typeof opts.body !== 'string'
-        ? { body: JSON.stringify(opts.body) }
-        : {}
-    ),
-  }));
+// const fetch = (url, opts = {}) => ('node-fetch')
+//   .then(({ default: fetch }) => fetch(`${baseUrl}${url}`, {
+//     ...opts,
+//     headers: {
+//       'content-type': 'application/json',
+//       ...opts.headers,
+//     },
+//     ...(
+//       opts.body && typeof opts.body !== 'string'
+//         ? { body: JSON.stringify(opts.body) }
+//         : {}
+//     ),
+//   }));
 
 const fetchWithAuth = (token) => (url, opts = {}) => fetch(url, {
   ...opts,
@@ -86,7 +86,7 @@ const checkAdminCredentials = () => fetch('/auth', {
   })
   .then(({ token }) => Object.assign(__e2e, { adminToken: token }));
 
-const waitForServerToBeReady = (retries = 10) => new Promise((resolve, reject) => {
+const waitForServerToBeReady = (retries = 20) => new Promise((resolve, reject) => {
   if (!retries) {
     return reject(new Error('Server took too long to start'));
   }
@@ -147,7 +147,7 @@ module.exports = () => new Promise((resolve, reject) => {
       .catch((err) => {
         console.log('there was an error');
         kill(child.pid, 'SIGKILL', () => reject(err));
-      })
+      });
     }).catch((error)=> console.log(error));
 });
 
