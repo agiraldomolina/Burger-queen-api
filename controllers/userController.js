@@ -7,7 +7,7 @@ const factory = require('./handlerFactory');
 
 // Middleware to allow logged in user or admin to update
 exports.setAllowed = async(req, res, next) => {
-  console.log('Hi from setAllowed');
+  //console.log('Hi from setAllowed');
   if(req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password update, please use /updateMyPasssword', 500));
   }
@@ -23,7 +23,11 @@ exports.setAllowed = async(req, res, next) => {
   }
 
    // Logged user can't update its role Only admin is allowed to update role
+
+
+   console.log(logUser.id === req.user.id && !req.body.role);
   if ((logUser.id === req.user.id && !req.body.role) || req.user.role === 'admin') {
+    console.log('Hi from setAllowed');
     next(); 
   }else{
     console.log('You are not logged in');
