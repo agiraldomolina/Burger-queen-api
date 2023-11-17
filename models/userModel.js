@@ -7,9 +7,8 @@ const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema({
   role: {
     type: String,
-    // required: [true, 'Please provide a role'],
     enum: ['admin', 'waiter','chef','user'],
-    default: 'user',
+    default: 'waiter',
   },
   email: {
     type: String,

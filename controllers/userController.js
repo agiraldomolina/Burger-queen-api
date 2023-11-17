@@ -37,6 +37,7 @@ exports.setAllowed = async(req, res, next) => {
 
 // Middleware to get Id of logged in user
 exports.getMe = (req, res, next) => {
+  console.log(req.user.role);
   req.params.id = req.user.id;
   next();
 };

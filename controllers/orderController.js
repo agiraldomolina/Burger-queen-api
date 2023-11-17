@@ -24,23 +24,31 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
     return next(new AppError('No order found with that ID', 404));
   }
 
-  const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const order = await Order.findById(req.params.id)
+  const userId = order.user._id;
 
-  if (updatedOrder.status === 'delivered') {
-    updatedOrder.dateProcessed = Date.now();
-  } else {
-    updatedOrder.dateProcessed = undefined;
+  if(userId == req.user.id || req.user.role === 'admin'){  
+    const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+  
+    if (updatedOrder.status === 'delivered') {
+      updatedOrder.dateProcessed = Date.now();
+    } else {
+      updatedOrder.dateProcessed = undefined;
+    }
+    await updatedOrder.save();
+  
+    res.status(200).json({
+      status: 'success',
+      data: {
+        order: updatedOrder,
+      },
+    });
+  }else {
+    return next(new AppError('You do not have permission to perform this action', 403))
   }
-  await updatedOrder.save();
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      order: updatedOrder,
-    },
-  });
 });
 

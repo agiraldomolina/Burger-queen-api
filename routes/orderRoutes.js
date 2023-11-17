@@ -14,7 +14,7 @@ router
 router
   .route("/:id")
   .get(authController.protect, orderController.getOrder)
-  .patch(authController.protect, authController.restrictTo('waiter','admin'), orderController.updateOrder)
+  .patch(authController.protect, orderController.updateOrder)
   .delete(authController.protect, authController.restrictTo('waiter', 'admin'), orderController.deleteOrder);
 
 module.exports = router;
