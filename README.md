@@ -1,4 +1,4 @@
-# Burger Queen - API con Node.js
+# Burger Queen - API with Node.js
 
 
 ![Node.js logo](https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg)
