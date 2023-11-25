@@ -1,4 +1,5 @@
 /*eslint-disable */
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -12,10 +13,18 @@ const authRouter = require("./routes/authRoutes");
 const orderRouter = require("./routes/orderRoutes");
 const productRouter = require("./routes/productRoutes");
 const userRouter = require('./routes/userRoutes');
+const viewsRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+app.set('view engine', 'pug');
+// using path.join will create the path in the correct order and sintax 
+app.set('views', path.join(__dirname, 'views'));
+
 // 1 -  GLOBAL MIDDLEWARES
+
+// This middleware allows the app access to the public files and open static files.
+app.use(express.static(path.join(__dirname, 'public')));
 // Set security HTTP headers
 console.log(process.env.NODE_ENV);
 app.use(helmet());
@@ -42,8 +51,6 @@ app.use(mongoSanitize());
 
 // Data sanititation againts XSS
 
-// This middleware allows the app access to the public files and open static files.
-app.use(express.static(`${__dirname}/public`));
 
 // Tests middelwares
 app.use((req, res, next) => {
@@ -58,10 +65,26 @@ app.use((req, res, next) => {
 });
 
 // 3- ROUTES
-app.use('/login', authRouter);
-app.use("/orders", orderRouter);
-app.use("/users", userRouter);
-app.use("/products", productRouter);
+// app.get('/', (req, res) => {
+//   res.status(200).render('base');
+// })
+
+// app.get('/overview', (req, res) => {
+//   res.status(200).render('overview', {
+//     title: 'Overview'
+//   });
+// });
+
+// app.get('/menu', (req, res) => {
+//   res.status(200).render('menu',{
+//     title: 'Menu'
+//   });
+// });
+app.use('/', viewsRouter);
+app.use('/api/v1/login', authRouter);
+app.use("/api/v1/orders", orderRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/products", productRouter);
 
 
 app.all('*', (req, res, next) => {

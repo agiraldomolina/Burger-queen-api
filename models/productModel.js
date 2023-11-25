@@ -26,6 +26,10 @@ const producSchema = new mongoose.Schema({
         message:'Type must be either dasayuno, almuerzo or cena'
       }
     },
+    description:{
+      type: String,
+      trim: true,
+    },
     dateEntry:{
       type: Date,
       default: Date.now,
